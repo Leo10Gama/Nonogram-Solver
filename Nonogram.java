@@ -102,10 +102,19 @@ public class Nonogram {
      * empty square.
      */
     public char[][] solveFullBoard() {
+        System.out.println("Generating x Permutations...");
         ArrayList<ArrayList<String>> xPermutations = new ArrayList<ArrayList<String>>();
         for (ArrayList<Integer> x : this.xHints) xPermutations.add(this.generatePermutations(this.width, x));
+        System.out.println("Generating y Permutations...");
         ArrayList<ArrayList<String>> yPermutations = new ArrayList<ArrayList<String>>();
         for (ArrayList<Integer> y : this.yHints) yPermutations.add(this.generatePermutations(this.height, y));
+        System.out.println("Solving...");
+        this.board = new char[this.width][this.height];
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                this.board[x][y] = ' ';
+            }
+        }
         return this.solveBoard(this.board, xPermutations, yPermutations);
     }
 
@@ -160,6 +169,11 @@ public class Nonogram {
                     }
                 }
             }
+
+            System.out.println("x pass:");
+            System.out.println(this.printBoard());
+            System.out.println();
+
             // Loop through each column
             for (int i = 0; i < this.width; i++) {
                 char[] temp = new char[this.height];
@@ -194,6 +208,11 @@ public class Nonogram {
                     }
                 }
             }
+            
+            System.out.println("y pass:");
+            System.out.println(this.printBoard());
+            System.out.println();
+
             // If one iteration completed without any changes being made, make an assumption
             if (!madeChanges) {
                 // No changes made because board is solved
@@ -305,6 +324,26 @@ public class Nonogram {
      */
     public int getHeight() {
         return this.height;
+    }
+
+    /** Setter method for one of the board's xHints in case one hint was entered
+     * incorrectly.
+     * @param newHints An ArrayList of Integers representing new hints to replace
+     * @param index The row to replace the hints of (i.e. board[0] will
+     *      correspond to index 1)
+     */
+    public void setXHint(int index, ArrayList<Integer> newHints) {
+        this.xHints.set(index - 1, newHints);
+    }
+
+    /** Setter method for one of the board's yHints in case one hint was entered
+     * incorrectly.
+     * @param newHints An ArrayList of Integers representing new hints to replace
+     * @param index The column to replace the hints of (i.e. board[0] will
+     *      correspond to index 1)
+     */
+    public void setYHint(int index, ArrayList<Integer> newHints) {
+        this.yHints.set(index - 1, newHints);
     }
 
     /** Method for printing the nonogram's current board. This will either be blank
