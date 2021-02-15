@@ -1,8 +1,8 @@
 import java.util.ArrayList;
 
 public class Nonogram {
-    private int xSize;
-    private int ySize;
+    private int width;
+    private int height;
     private ArrayList<ArrayList<Integer>> xHints;   // an array of ArrayLists
     private ArrayList<ArrayList<Integer>> yHints;   // also an array of ArrayLists
     // For the board, '' represents empty, 'x' represents no fill, 'o' represents a filled square
@@ -13,18 +13,18 @@ public class Nonogram {
     }
 
     public Nonogram(ArrayList<ArrayList<Integer>> xHints, ArrayList<ArrayList<Integer>> yHints) {
-        this(xHints.size(), yHints.size(), xHints, yHints);
+        this(yHints.size(), xHints.size(), xHints, yHints);
     }
 
-    private Nonogram(int xSize, int ySize, ArrayList<ArrayList<Integer>> xHints, ArrayList<ArrayList<Integer>> yHints) {
-        if (xSize != xHints.size() || ySize != yHints.size()) {   // Sizes of hints do not match with given parameters
-            this.xSize = 0;
-            this.ySize = 0;
+    private Nonogram(int width, int height, ArrayList<ArrayList<Integer>> xHints, ArrayList<ArrayList<Integer>> yHints) {
+        if (height != xHints.size() || width != yHints.size()) {   // Sizes of hints do not match with given parameters
+            this.width = 0;
+            this.height = 0;
             this.xHints = null;
             this.yHints = null;
         } else {
-            this.xSize = xSize;
-            this.ySize = ySize;
+            this.width = width;
+            this.height = height;
             this.xHints = new ArrayList<ArrayList<Integer>>();
             for (ArrayList<Integer> item : xHints) {
                 this.xHints.add(new ArrayList<Integer>(item));
@@ -33,9 +33,9 @@ public class Nonogram {
             for (ArrayList<Integer> item : yHints) {
                 this.yHints.add(new ArrayList<Integer>(item));
             }
-            this.board = new char[xSize][ySize];
-            for (int x = 0; x < xSize; x++) {
-                for (int y = 0; y < ySize; y++) {
+            this.board = new char[width][height];
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y < height; y++) {
                     this.board[x][y] = ' ';
                 }
             }
@@ -97,15 +97,15 @@ public class Nonogram {
     }
 
     /** The more interesting method, it returns a character array of dimensions
-     * `xSize` x `ySize` made to represent the completed nonogram object, filled
+     * `width` x `height` made to represent the completed nonogram object, filled
      * in with either 'o' to represent a filled square, or 'x' to represent an
      * empty square.
      */
     public char[][] solveFullBoard() {
         ArrayList<ArrayList<String>> xPermutations = new ArrayList<ArrayList<String>>();
-        for (ArrayList<Integer> x : this.xHints) xPermutations.add(this.generatePermutations(this.xSize, x));
+        for (ArrayList<Integer> x : this.xHints) xPermutations.add(this.generatePermutations(this.width, x));
         ArrayList<ArrayList<String>> yPermutations = new ArrayList<ArrayList<String>>();
-        for (ArrayList<Integer> y : this.yHints) yPermutations.add(this.generatePermutations(this.ySize, y));
+        for (ArrayList<Integer> y : this.yHints) yPermutations.add(this.generatePermutations(this.height, y));
         return this.solveBoard(this.board, xPermutations, yPermutations);
     }
 
@@ -127,8 +127,8 @@ public class Nonogram {
         while (true) {     // bad practice, i know, but it works so sue me :\
             boolean madeChanges = false;
             // Loop through each row
-            for (int i = 0; i < this.xSize; i++) {
-                char[] temp = new char[this.xSize];
+            for (int i = 0; i < this.height; i++) {
+                char[] temp = new char[this.width];
                 // Go through each permutation
                 for (String permutation : xPermutations.get(i)) {
                     // Verify if the permutation is still possible on the board
@@ -145,7 +145,7 @@ public class Nonogram {
                         continue;
                     }
                     // Figure out how many squares to add to the board
-                    for (int j = 0; j < this.xSize; j++) {
+                    for (int j = 0; j < this.width; j++) {
                         if (temp[j] == '\0') temp[j] = permutation.charAt(j);
                         else if (temp[j] != permutation.charAt(j)) temp[j] = ' ';  // Don't put anything
                     }
@@ -161,8 +161,8 @@ public class Nonogram {
                 }
             }
             // Loop through each column
-            for (int i = 0; i < this.ySize; i++) {
-                char[] temp = new char[this.ySize];
+            for (int i = 0; i < this.width; i++) {
+                char[] temp = new char[this.height];
                 // Go through each permutation
                 for (String permutation : yPermutations.get(i)) {
                     // Verify if the permutation is still possible on the board
@@ -179,7 +179,7 @@ public class Nonogram {
                         continue;
                     }
                     // Figure out how many squares to add to the board
-                    for (int j = 0; j < this.ySize; j++) {
+                    for (int j = 0; j < this.height; j++) {
                         if (temp[j] == '\0') temp[j] = permutation.charAt(j);
                         else if (temp[j] != permutation.charAt(j)) temp[j] = ' ';  // Don't put anything
                     }
@@ -198,8 +198,8 @@ public class Nonogram {
             if (!madeChanges) {
                 // No changes made because board is solved
                 boolean solved = true;
-                for (int i = 0; i < this.xSize; i++) {
-                    for (int j = 0; j < this.ySize; j++) {
+                for (int i = 0; i < this.width; i++) {
+                    for (int j = 0; j < this.height; j++) {
                         if (board[i][j] == ' ') {
                             solved = false;
                             break;
@@ -210,7 +210,7 @@ public class Nonogram {
                 // No changes made because we must make a contradiction (pick random permutation to be true)
                 boolean madeNewChange = false;
                 // Loop through rows
-                for (int i = 0; (i < this.xSize) && !madeNewChange; i++) {
+                for (int i = 0; (i < this.height) && !madeNewChange; i++) {
                     while (xPermutations.get(i).size() > 1) {
                         // If we're in this loop, at least one new change will be made
                         madeNewChange = true;
@@ -220,9 +220,9 @@ public class Nonogram {
                             board[j][i] = permutation.charAt(j);
                         }
                         // Create temporary parameters
-                        char[][] tempBoard = new char[this.xSize][this.ySize];
-                        for (int x = 0; x < this.xSize; x++) {
-                            for (int y = 0; y < this.ySize; y++) {
+                        char[][] tempBoard = new char[this.width][this.height];
+                        for (int x = 0; x < this.width; x++) {
+                            for (int y = 0; y < this.height; y++) {
                                 tempBoard[x][y] = board[x][y];
                             }
                         }
@@ -242,7 +242,7 @@ public class Nonogram {
                             }
                             tempYPerms.add(tempA);
                         }
-                        char[][] unsolvable = new char[this.xSize][this.ySize];
+                        char[][] unsolvable = new char[this.width][this.height];
                         // If board is solved from this, return it
                         if (this.solveBoard(tempBoard, tempXPerms, tempYPerms).length != 0) return tempBoard;
                         // Otherwise remove it from the collection and try with a new permutation
@@ -250,7 +250,7 @@ public class Nonogram {
                     }
                 }
                 // Loop through columns
-                for (int i = 0; (i < this.ySize) && !madeNewChange; i++) {
+                for (int i = 0; (i < this.width) && !madeNewChange; i++) {
                     while (yPermutations.get(i).size() > 1) {
                         // If we're in this loop, at least one new change will be made
                         madeNewChange = true;
@@ -260,9 +260,9 @@ public class Nonogram {
                             board[j][i] = permutation.charAt(j);
                         }
                         // Create temporary parameters
-                        char[][] tempBoard = new char[this.xSize][this.ySize];
-                        for (int x = 0; x < this.xSize; x++) {
-                            for (int y = 0; y < this.ySize; y++) {
+                        char[][] tempBoard = new char[this.width][this.height];
+                        for (int x = 0; x < this.width; x++) {
+                            for (int y = 0; y < this.height; y++) {
                                 tempBoard[x][y] = board[x][y];
                             }
                         }
@@ -282,7 +282,7 @@ public class Nonogram {
                             }
                             tempYPerms.add(tempA);
                         }
-                        char[][] unsolvable = new char[this.xSize][this.ySize];
+                        char[][] unsolvable = new char[this.width][this.height];
                         // If board is solved from this, return it
                         if (this.solveBoard(tempBoard, tempXPerms, tempYPerms).length != 0) return tempBoard;
                         // Otherwise remove it from the collection and try with a new permutation
@@ -293,23 +293,48 @@ public class Nonogram {
         }
     }
 
-    /** Getter method for the xSize property, AKA width of the nonogram board
+    /** Getter method for the width property of the nonogram board
      * @return The integer value of the nonogram board's width
      */
-    public int getXSize() {
-        return this.xSize;
+    public int getWidth() {
+        return this.width;
     }
 
-    /** Getter method for the ySize property, AKA height of the nonogram board
+    /** Getter method for the height property, AKA height of the nonogram board
      * @return The integer value of the nonogram board's height
      */
-    public int getYSize() {
-        return this.ySize;
+    public int getHeight() {
+        return this.height;
+    }
+
+    /** Method for printing the nonogram's current board. This will either be blank
+     * or completely solved, depending on if the `solveFullBoard()` method was called
+     * @return A string representation of the nonogram board
+     */
+    public String printBoard() {
+        String result = new String();
+        for (int y = 0; y < this.height; y++) {
+            for (int x = 0; x < this.width; x++) {
+                switch (this.board[x][y]) {
+                    case 'o':
+                        result += "\u2593\u2593";
+                        break;
+                    case 'x':
+                        result += "\u2591\u2591";
+                        break;
+                    default:
+                        result += "??";
+                }
+            }
+            result += '\n';
+        }
+        return result;
     }
 
     // Debug method
     public void printItems() {
-        System.out.println("xSize:\t" + this.xSize + "\nySize:\t" + this.ySize + "\nxHints: ");
+        System.out.println("width:\t" + this.width + "\nheight:\t" + this.height);
+        System.out.println("xHints: ");
         for (ArrayList<Integer> hintList : this.xHints) {
             System.out.print("\t");
             for (Integer hintNum : hintList) {
@@ -334,7 +359,7 @@ public class Nonogram {
             System.out.print("For hint ");
             for (int i : row) System.out.print(i + " ");
             System.out.println(",");
-            ArrayList<String> myPerms = this.generatePermutations(this.getXSize(), row);
+            ArrayList<String> myPerms = this.generatePermutations(this.getWidth(), row);
             for (String perm : myPerms) {
                 System.out.println("\t" + perm);
             }
@@ -343,7 +368,7 @@ public class Nonogram {
             System.out.print("For hint ");
             for (int i : col) System.out.print(i + " ");
             System.out.println(",");
-            ArrayList<String> myPerms = this.generatePermutations(this.getYSize(), col);
+            ArrayList<String> myPerms = this.generatePermutations(this.getHeight(), col);
             for (String perm : myPerms) {
                 System.out.println("\t" + perm);
             }
