@@ -41,5 +41,13 @@ public class NonogramSolver {
         Nonogram n = new Nonogram(xHints, yHints);
         n.printItems();
         n.printPermutations();
+        n.solveFullBoard();
+        System.out.println("Solved and returned!");
+        for (int y = 0; y < 5; y++) {
+            for (int x = 0; x < 5; x++) {
+                System.out.print(n.board[x][y]);
+            }
+            System.out.println();
+        }
     }
 }
